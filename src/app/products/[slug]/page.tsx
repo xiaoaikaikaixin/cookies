@@ -1,7 +1,11 @@
 import { prisma } from "@/lib/db";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import AddToCartButton from "./add-to-cart-button";
-import { getProductImage } from "@/lib/product-images";
+import ProductGallery from "./product-gallery";
+import { getProductGallery, getProductImage } from "@/lib/product-images";
+import { getProductDetailContent } from "@/lib/product-detail-content";
+import ProductPurchasePanel from "./product-purchase-panel";
+import RelatedProductsGrid from "./related-products-grid";
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -13,33 +17,56 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   if (!product) notFound();
 
   const productImage = getProductImage(product.slug, product.image);
+  const productGallery = getProductGallery(product.slug, product.image);
+  const detailContent = getProductDetailContent(product.slug, product.description);
+  const relatedProducts = await prisma.product.findMany({
+    where: {
+      isActive: true,
+      slug: { not: product.slug },
+    },
+    orderBy: [{ isFeatured: "desc" }, { id: "asc" }],
+    take: 4,
+  });
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
-      <div className="flex flex-col md:flex-row gap-10">
+      <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
         <div className="flex-1">
-          <div className="aspect-square overflow-hidden rounded-[1.8rem] border border-[#EFE5D8] bg-[#F7EFE5] shadow-[0_18px_40px_rgba(120,80,40,0.06)]">
-            <img
-              src={productImage}
-              alt={`${product.nameCn} ${product.name}`}
-              className="h-full w-full object-cover"
-            />
-          </div>
+          <ProductGallery images={productGallery} alt={`${product.nameCn} ${product.name}`} />
+          <Link
+            href="/products"
+            className="mt-6 flex min-h-14 items-center justify-between border-y border-dashed border-[#D8C9C0] px-4 py-4 text-[#6D0E33] transition hover:bg-[#FFF8FB]"
+          >
+            <span className="text-3xl leading-none" aria-hidden="true">
+              ←
+            </span>
+            <span className="text-xl font-medium tracking-[0.01em]">Back to Shop</span>
+          </Link>
         </div>
-        <div className="flex-1">
-          <p className="text-sm text-primary font-medium mb-1">{product.category.name}</p>
-          <h1 className="text-3xl font-bold mb-1 font-[family-name:var(--font-serif)] text-brown">{product.name}</h1>
-          <p className="text-xl text-gray-500 mb-4">{product.nameCn}</p>
-          <p className="text-3xl font-bold text-primary mb-4">RM {product.price.toFixed(2)} <span className="text-sm text-gray-400 font-normal">/ {product.unit}</span></p>
-          <p className="text-gray-600 leading-relaxed mb-6">{product.description}</p>
-          <AddToCartButton product={{ id: product.id, name: product.name, nameCn: product.nameCn, price: product.price, image: productImage }} />
-          <div className="mt-6 p-4 bg-[#FFFDFA] rounded-lg text-sm text-gray-500 border border-[#EFE5D8]">
-            <p>✅ 满 RM150 免运费</p>
-            <p>✅ Freshly baked upon order</p>
-            <p>✅ Halal-certified ingredients</p>
-          </div>
-        </div>
+        <ProductPurchasePanel
+          product={{
+            id: product.id,
+            name: product.name,
+            nameCn: product.nameCn,
+            category: product.category.name,
+            unit: product.unit,
+            price: product.price,
+            image: productImage,
+          }}
+          detailContent={detailContent}
+        />
       </div>
+      <RelatedProductsGrid
+        products={relatedProducts.map((item) => ({
+          id: item.id,
+          slug: item.slug,
+          name: item.name,
+          nameCn: item.nameCn,
+          image: item.image,
+          price: item.price,
+          unit: item.unit,
+        }))}
+      />
     </div>
   );
 }

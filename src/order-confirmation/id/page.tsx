@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/db";
+import paymentQr from "../../../data/payment.png";
 
 export default async function OrderConfirmation({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -32,8 +34,11 @@ export default async function OrderConfirmation({ params }: { params: Promise<{ 
       </div>
 
       {order.paymentMethod === "paynow" && (
-        <div className="bg-[#FFFBF5] rounded-xl p-6 max-w-md mx-auto mb-6 border border-[#EFE5D8]">
-          <p className="font-bold mb-2">📱 PayNow to UEN: 202412345C</p>
+        <div className="bg-[#FFFBF5] rounded-2xl p-6 max-w-md mx-auto mb-6 border border-[#EFE5D8]">
+          <div className="mx-auto max-w-[320px] overflow-hidden rounded-[1.4rem] border border-[#E6D9EA] bg-white p-3 shadow-[0_12px_28px_rgba(112,60,120,0.10)]">
+            <Image src={paymentQr} alt="PayNow QR code" className="h-auto w-full rounded-[1rem]" priority />
+          </div>
+          <p className="font-bold mt-4 mb-2 text-brown">PayNow Payment</p>
           <p className="text-sm text-gray-600">Please WhatsApp us your payment screenshot for confirmation.</p>
         </div>
       )}

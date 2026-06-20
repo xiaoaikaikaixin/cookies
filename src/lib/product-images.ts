@@ -24,12 +24,27 @@ const productImageMap: Record<string, string> = {
   "premium-trio-gift-set": "/images/products/premium-trio-gift-set.png",
 };
 
+const productGalleryMap: Record<string, string[]> = {
+  "pineapple-tart": [
+    "/images/products/pineapple-tart.png",
+    "/images/products/pineapple-tart-detail-1.png",
+    "/images/products/pineapple-tart-detail-2.png",
+  ],
+};
+
 export function getProductImage(slug: string, storedImage?: string) {
   if (storedImage?.startsWith("/images/products/")) {
     return storedImage;
   }
 
   return productImageMap[slug] ?? defaultProductImage;
+}
+
+export function getProductGallery(slug: string, storedImage?: string) {
+  const primaryImage = getProductImage(slug, storedImage);
+  const mappedGallery = productGalleryMap[slug] ?? [];
+
+  return [primaryImage, ...mappedGallery.filter((image) => image !== primaryImage)];
 }
 
 export const categoryImages = {

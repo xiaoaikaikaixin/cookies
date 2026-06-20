@@ -1,23 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/lib/cart-context";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MessageCircleMore, Smartphone } from "lucide-react";
+
+const CHECKOUT_FORM_STORAGE_KEY = "cookie-checkout-form";
 
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart();
   const router = useRouter();
+  const today = new Date().toISOString().split("T")[0];
   const [submitting, setSubmitting] = useState(false);
+  const [formReady, setFormReady] = useState(false);
   const [form, setForm] = useState({
     customerName: "",
     customerPhone: "",
     customerEmail: "",
+    address: "",
+    deliveryDate: new Date().toISOString().split("T")[0],
     notes: "",
     paymentMethod: "paynow" as "paynow" | "whatsapp",
   });
+
+  useEffect(() => {
+    const savedForm = window.sessionStorage.getItem(CHECKOUT_FORM_STORAGE_KEY);
+    if (!savedForm) {
+      setFormReady(true);
+      return;
+    }
+
+    try {
+      const parsedForm = JSON.parse(savedForm) as Partial<typeof form>;
+      setForm((current) => ({ ...current, ...parsedForm }));
+    } catch {
+      window.sessionStorage.removeItem(CHECKOUT_FORM_STORAGE_KEY);
+    } finally {
+      setFormReady(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!formReady) return;
+    window.sessionStorage.setItem(CHECKOUT_FORM_STORAGE_KEY, JSON.stringify(form));
+  }, [form, formReady]);
 
   if (items.length === 0) {
     return (
@@ -38,6 +66,13 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          notes: [
+            `Address: ${form.address}`,
+            `Delivery Date: ${form.deliveryDate}`,
+            form.notes.trim(),
+          ]
+            .filter(Boolean)
+            .join("\n\n"),
           items: items.map((i) => ({ productId: i.id, quantity: i.quantity, price: i.price })),
           totalAmount: totalPrice,
         }),
@@ -46,9 +81,18 @@ export default function CheckoutPage() {
       if (!res.ok) throw new Error("Order failed");
 
       const data = await res.json();
-      clearCart();
       toast.success("Order placed successfully!");
-      router.push(`/order-confirmation/${data.orderId}`);
+
+      if (form.paymentMethod === "whatsapp") {
+        clearCart();
+        window.sessionStorage.removeItem(CHECKOUT_FORM_STORAGE_KEY);
+      }
+
+      router.push(
+        form.paymentMethod === "paynow"
+          ? `/order-payment/${data.orderId}`
+          : `/order-confirmation/${data.orderId}`
+      );
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
@@ -62,7 +106,7 @@ export default function CheckoutPage() {
       <h1 className="text-3xl font-bold mb-8 font-[family-name:var(--font-serif)] text-brown">Checkout</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-        <form onSubmit={handleSubmit} className="md:col-span-3 flex flex-col gap-4">
+        <form id="checkout-form" onSubmit={handleSubmit} className="md:col-span-3 flex flex-col gap-4">
           <h2 className="text-lg font-bold text-brown">Contact Information</h2>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
@@ -76,46 +120,74 @@ export default function CheckoutPage() {
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input type="email" className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" value={form.customerEmail} onChange={(e) => setForm({ ...form, customerEmail: e.target.value })} placeholder="your@email.com" />
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Address *</label>
+            <textarea
+              required
+              rows={3}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              value={form.address}
+              onChange={(e) => setForm({ ...form, address: e.target.value })}
+              placeholder="Your delivery address"
+            />
+          </div>
 
           <h2 className="text-lg font-bold text-brown mt-4">Payment Method</h2>
           <div className="flex gap-4">
             <label className={`flex-1 p-4 border-2 rounded-xl cursor-pointer transition-colors ${form.paymentMethod === "paynow" ? "border-primary bg-[#FFFBF5]" : "border-gray-200"}`}>
               <input type="radio" name="paymentMethod" value="paynow" checked={form.paymentMethod === "paynow"} onChange={(e) => setForm({ ...form, paymentMethod: e.target.value as any })} className="sr-only" />
               <div className="text-center">
-                <span className="text-2xl block mb-1">📱</span>
+                <Smartphone size={24} className="mx-auto mb-2 text-primary" />
                 <p className="font-semibold text-sm">PayNow</p>
               </div>
             </label>
             <label className={`flex-1 p-4 border-2 rounded-xl cursor-pointer transition-colors ${form.paymentMethod === "whatsapp" ? "border-primary bg-[#FFFBF5]" : "border-gray-200"}`}>
               <input type="radio" name="paymentMethod" value="whatsapp" checked={form.paymentMethod === "whatsapp"} onChange={(e) => setForm({ ...form, paymentMethod: e.target.value as any })} className="sr-only" />
               <div className="text-center">
-                <span className="text-2xl block mb-1">💬</span>
+                <MessageCircleMore size={24} className="mx-auto mb-2 text-primary" />
                 <p className="font-semibold text-sm">WhatsApp</p>
               </div>
             </label>
           </div>
-
-          {form.paymentMethod === "paynow" && (
-            <div className="p-4 bg-[#FFFDFA] rounded-xl text-center border border-[#EFE5D8]">
-              <p className="font-semibold mb-2">PayNow to UEN: 202412345C</p>
-              <p className="text-sm text-gray-500">After payment, upload the screenshot below or WhatsApp us the proof.</p>
-            </div>
-          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Order Notes (optional)</label>
             <textarea className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" rows={2} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Any special requests..." />
           </div>
 
-          <button type="submit" disabled={submitting} className="w-full bg-primary text-white font-bold py-3 rounded-full hover:bg-primary-dark transition-colors disabled:opacity-50 cursor-pointer mt-4">
-            {submitting ? "Placing Order..." : `Place Order — $${totalPrice.toFixed(2)}`}
-          </button>
         </form>
 
         {/* Order summary */}
         <div className="md:col-span-2">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-[#EFE5D8] sticky top-24">
-            <h2 className="text-lg font-bold text-brown mb-4">Order Summary</h2>
+          <div className="sticky top-24 space-y-4">
+            <div className="rounded-xl border border-[#EFE5D8] bg-white p-6 shadow-sm">
+              <h2 className="text-3xl font-bold font-[family-name:var(--font-serif)] text-brown">
+                When should we deliver
+              </h2>
+              <div className="mt-5 rounded-lg bg-[#FAF7F2] px-4 py-3 text-base font-semibold text-brown">
+                Delivery Details
+              </div>
+              <div className="mt-5">
+                <label className="mb-3 block text-lg font-semibold text-brown">
+                  Delivery Date <span className="text-[#C63B3B]">*</span>
+                </label>
+                <input
+                  required
+                  type="date"
+                  min={today}
+                  className="w-full rounded-none border border-[#A6D74F] bg-white px-4 py-4 text-lg text-[#5B4A3A] outline-none transition focus:border-[#86C020] focus:ring-2 focus:ring-[#D9EEAF]"
+                  value={form.deliveryDate}
+                  onChange={(e) => setForm({ ...form, deliveryDate: e.target.value })}
+                />
+                <p className="mt-4 text-base leading-8 text-[#5B4A3A]">
+                  Deliveries will be made between 11am to 6pm and the exact time will depend on
+                  the driver&apos;s route that day.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-[#EFE5D8]">
+            <h2 className="text-lg font-bold text-brown mb-4">Order Summary Information</h2>
             <div className="flex flex-col gap-3 mb-4">
               {items.map((item) => (
                 <div key={item.id} className="flex justify-between text-sm">
@@ -128,9 +200,19 @@ export default function CheckoutPage() {
               <span>Total</span>
               <span className="text-primary">${totalPrice.toFixed(2)}</span>
             </div>
+              <button
+                type="submit"
+                form="checkout-form"
+                disabled={submitting}
+                className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {submitting ? "Placing Order..." : `Place Order - $${totalPrice.toFixed(2)}`}
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
   );
 }
