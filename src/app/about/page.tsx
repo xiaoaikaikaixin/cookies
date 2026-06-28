@@ -83,8 +83,8 @@ export default function AboutPage() {
               <div className="relative flex items-center py-6 lg:py-8">
                 <div className="absolute -inset-2 rounded-[2.25rem] border border-[#EBDCC8]/40 bg-gradient-to-br from-[#FDF9F2]/30 to-transparent" aria-hidden="true" />
                 <div className="relative w-full overflow-hidden rounded-[2rem] border border-[#EADBC8] bg-[#F8EFE2] shadow-[0_24px_56px_rgba(124,84,43,0.10)]">
-                  <Image src="/7.png" alt="Lisa Handmade Cookie — artisan bakery with cookie jar, gift box, and warm sunlight"
-                    className="h-auto w-full object-cover" priority
+                  <img src="/7.png" alt="Lisa Handmade Cookie — artisan bakery with cookie jar, gift box, and warm sunlight"
+                    className="h-auto w-full object-cover"
                     sizes="(min-width: 1024px) 50vw, 100vw" />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#F8EFE2]/50 via-transparent to-transparent" />
                   <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#F4E8D8]/90 to-transparent lg:w-16" />
@@ -120,7 +120,7 @@ export default function AboutPage() {
                 <FadeUp key={card.title} delay={i * 0.1}>
                   <article className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-[#EFE5D8] bg-white shadow-[0_6px_24px_rgba(120,80,30,0.04)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(120,80,30,0.10)]">
                     <div className="relative aspect-[4/3] w-full overflow-hidden">
-                      <Image src={card.image} alt={card.title}
+                      <img src={card.image} alt={card.title}
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                         sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
                     </div>
@@ -201,7 +201,7 @@ export default function AboutPage() {
             <div className="grid grid-cols-2 gap-4">
               <ZoomIn delay={0.15}>
                 <div className="overflow-hidden rounded-[1.75rem] shadow-[0_14px_36px_rgba(120,80,30,0.07)]">
-                  <Image src="/5.png" alt="Lisa premium gift set"
+                  <img src="/5.png" alt="Lisa premium gift set"
                     className="aspect-[3/4] w-full object-cover transition duration-500 hover:scale-105"
                     sizes="(min-width: 1024px) 25vw, 50vw" />
                 </div>
@@ -209,7 +209,7 @@ export default function AboutPage() {
               <div className="flex flex-col gap-4">
                 <ZoomIn delay={0.25}>
                   <div className="overflow-hidden rounded-[1.75rem] shadow-[0_14px_36px_rgba(120,80,30,0.07)]">
-                    <Image src="/3.png" alt="Lisa handcrafted cookies"
+                    <img src="/3.png" alt="Lisa handcrafted cookies"
                       className="aspect-square w-full object-cover transition duration-500 hover:scale-105"
                       sizes="(min-width: 1024px) 25vw, 50vw" />
                   </div>
