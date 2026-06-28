@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 
+export const dynamic = 'force-dynamic';
+
 function formatPaymentMethod(paymentMethod: string) {
   if (paymentMethod === "paynow") return "PayNow";
   if (paymentMethod === "whatsapp") return "WhatsApp";

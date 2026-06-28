@@ -7,6 +7,8 @@ import { getProductDetailContent } from "@/lib/product-detail-content";
 import ProductPurchasePanel from "./product-purchase-panel";
 import RelatedProductsGrid from "./related-products-grid";
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const product = await prisma.product.findUnique({

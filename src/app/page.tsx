@@ -5,6 +5,9 @@ import ProductCard from "@/components/frontend/product-card";
 import { categoryImages } from "@/lib/product-images";
 import bannerImage from "../../data/banner.png";
 
+// Force dynamic rendering to avoid build-time database queries
+export const dynamic = 'force-dynamic';
+
 const categoryShowcase = [
   { label: "凤梨酥", en: "Pineapple Tart", href: "/products/pineapple-tart", img: categoryImages.pineapple },
   { label: "牛油曲奇", en: "Butter Cookies", href: "/products?category=premium", img: categoryImages.butter },
