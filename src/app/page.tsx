@@ -63,11 +63,17 @@ const reasons = [
 ];
 
 export default async function Home() {
-  const featured = await prisma.product.findMany({
-    where: { isFeatured: true, isActive: true },
-    include: { category: true },
-    take: 5,
-  });
+  let featured = [];
+  try {
+    featured = await prisma.product.findMany({
+      where: { isFeatured: true, isActive: true },
+      include: { category: true },
+      take: 5,
+    });
+  } catch (error) {
+    console.error('Failed to load featured products:', error);
+    // If database fails, just show empty featured section
+  }
 
   return (
     <div>

@@ -11,24 +11,34 @@ export const dynamic = 'force-dynamic';
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = await prisma.product.findUnique({
-    where: { slug },
-    include: { category: true },
-  });
+  let product = null;
+  let relatedProducts = [];
+  
+  try {
+    product = await prisma.product.findUnique({
+      where: { slug },
+      include: { category: true },
+    });
 
-  if (!product) notFound();
+    if (!product) notFound();
+
+    const relatedProductsData = await prisma.product.findMany({
+      where: {
+        isActive: true,
+        slug: { not: product.slug },
+      },
+      orderBy: [{ isFeatured: "desc" }, { id: "asc" }],
+      take: 4,
+    });
+    relatedProducts = relatedProductsData;
+  } catch (error) {
+    console.error('Failed to load product:', error);
+    notFound();
+  }
 
   const productImage = getProductImage(product.slug, product.image);
   const productGallery = getProductGallery(product.slug, product.image);
   const detailContent = getProductDetailContent(product.slug, product.description);
-  const relatedProducts = await prisma.product.findMany({
-    where: {
-      isActive: true,
-      slug: { not: product.slug },
-    },
-    orderBy: [{ isFeatured: "desc" }, { id: "asc" }],
-    take: 4,
-  });
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">

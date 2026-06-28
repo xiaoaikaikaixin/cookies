@@ -4,10 +4,15 @@ import ProductCard from "@/components/frontend/product-card";
 export const dynamic = 'force-dynamic';
 
 export default async function ProductsPage() {
-  const products = await prisma.product.findMany({
-    where: { isActive: true },
-    include: { category: true },
-  });
+  let products = [];
+  try {
+    products = await prisma.product.findMany({
+      where: { isActive: true },
+      include: { category: true },
+    });
+  } catch (error) {
+    console.error('Failed to load products:', error);
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
