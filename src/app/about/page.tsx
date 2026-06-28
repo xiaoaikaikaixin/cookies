@@ -2,11 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, Leaf, ScrollText, Gift, Sprout, MapPin, Sparkles } from "lucide-react";
 import { FadeUp, ZoomIn } from "@/components/frontend/scroll-reveal";
-import img1 from "../../../data/1.png";
-import img2 from "../../../data/2.png";
-import img3 from "../../../data/3.png";
-import img4 from "../../../data/4.png";
-import img5 from "../../../data/5.png";
 
 /* ===================================================================
    REFERENCE IMAGE: 1024 × 1426  —  5 sections reproduced exactly
@@ -22,10 +17,10 @@ import img5 from "../../../data/5.png";
    =================================================================== */
 
 const whyChooseCards = [
-  { image: img1, icon: Heart, title: "Handcrafted Daily", subtitle: "Freshly made in small batches every day" },
-  { image: img2, icon: Leaf, title: "Premium Ingredients", subtitle: "Carefully selected for quality and flavour" },
-  { image: img3, icon: ScrollText, title: "Traditional Recipes", subtitle: "Generations of festive baking heritage" },
-  { image: img4, icon: Gift, title: "Beautiful Gift Presentation", subtitle: "Elegant packaging for every celebration" },
+  { image: "/1.png", icon: Heart, title: "Handcrafted Daily", subtitle: "Freshly made in small batches every day" },
+  { image: "/2.png", icon: Leaf, title: "Premium Ingredients", subtitle: "Carefully selected for quality and flavour" },
+  { image: "/3.png", icon: ScrollText, title: "Traditional Recipes", subtitle: "Generations of festive baking heritage" },
+  { image: "/4.png", icon: Gift, title: "Beautiful Gift Presentation", subtitle: "Elegant packaging for every celebration" },
 ];
 
 const brandValues = [
@@ -88,7 +83,7 @@ export default function AboutPage() {
               <div className="relative flex items-center py-6 lg:py-8">
                 <div className="absolute -inset-2 rounded-[2.25rem] border border-[#EBDCC8]/40 bg-gradient-to-br from-[#FDF9F2]/30 to-transparent" aria-hidden="true" />
                 <div className="relative w-full overflow-hidden rounded-[2rem] border border-[#EADBC8] bg-[#F8EFE2] shadow-[0_24px_56px_rgba(124,84,43,0.10)]">
-                  <Image src={img1} alt="Lisa Handmade Cookie — artisan bakery with cookie jar, gift box, and warm sunlight"
+                  <Image src="/7.png" alt="Lisa Handmade Cookie — artisan bakery with cookie jar, gift box, and warm sunlight"
                     className="h-auto w-full object-cover" priority
                     sizes="(min-width: 1024px) 50vw, 100vw" />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#F8EFE2]/50 via-transparent to-transparent" />
@@ -206,7 +201,7 @@ export default function AboutPage() {
             <div className="grid grid-cols-2 gap-4">
               <ZoomIn delay={0.15}>
                 <div className="overflow-hidden rounded-[1.75rem] shadow-[0_14px_36px_rgba(120,80,30,0.07)]">
-                  <Image src={img5} alt="Lisa premium gift set"
+                  <Image src="/5.png" alt="Lisa premium gift set"
                     className="aspect-[3/4] w-full object-cover transition duration-500 hover:scale-105"
                     sizes="(min-width: 1024px) 25vw, 50vw" />
                 </div>
@@ -214,7 +209,7 @@ export default function AboutPage() {
               <div className="flex flex-col gap-4">
                 <ZoomIn delay={0.25}>
                   <div className="overflow-hidden rounded-[1.75rem] shadow-[0_14px_36px_rgba(120,80,30,0.07)]">
-                    <Image src={img3} alt="Lisa handcrafted cookies"
+                    <Image src="/3.png" alt="Lisa handcrafted cookies"
                       className="aspect-square w-full object-cover transition duration-500 hover:scale-105"
                       sizes="(min-width: 1024px) 25vw, 50vw" />
                   </div>
