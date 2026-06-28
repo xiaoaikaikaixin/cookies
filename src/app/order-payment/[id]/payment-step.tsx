@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ImagePlus, Upload, X } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
+import toast from "react-hot-toast";
 import paymentQr from "../../../../data/payment.png";
 
 const CHECKOUT_FORM_STORAGE_KEY = "cookie-checkout-form";
@@ -20,6 +21,7 @@ export default function PaymentStep({ orderId }: PaymentStepProps) {
   const [receiptModalOpen, setReceiptModalOpen] = useState(false);
   const [pendingReceipt, setPendingReceipt] = useState<{ file: File; previewUrl: string } | null>(null);
   const [uploadedReceipt, setUploadedReceipt] = useState<{ name: string; previewUrl: string } | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const pendingPreviewRef = useRef<string | null>(null);
   const uploadedPreviewRef = useRef<string | null>(null);
@@ -100,16 +102,56 @@ export default function PaymentStep({ orderId }: PaymentStepProps) {
         <button
           type="button"
           disabled={submitting}
-          onClick={() => {
+          onClick={async () => {
+            if (!uploadedReceipt) {
+              setErrorMessage("请上传付款截图");
+              return;
+            }
+            setErrorMessage(null);
             setSubmitting(true);
-            clearCart();
-            window.sessionStorage.removeItem(CHECKOUT_FORM_STORAGE_KEY);
-            router.push(`/order-confirmation/${orderId}`);
+
+            try {
+              // 从 sessionStorage 获取待处理的订单数据
+              const pendingOrderData = window.sessionStorage.getItem(`pending-order-${orderId}`);
+              if (!pendingOrderData) {
+                throw new Error("Order data not found");
+              }
+              const orderData = JSON.parse(pendingOrderData);
+
+              // 创建订单
+              const res = await fetch("/api/orders", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(orderData),
+              });
+
+              if (!res.ok) throw new Error("Order failed");
+
+              const data = await res.json();
+              toast.success("Order placed successfully!");
+
+              // 清理数据
+              clearCart();
+              window.sessionStorage.removeItem(CHECKOUT_FORM_STORAGE_KEY);
+              window.sessionStorage.removeItem(`pending-order-${orderId}`);
+
+              // 跳转到确认页面
+              router.push(`/order-confirmation/${data.orderId}`);
+            } catch {
+              toast.error("Something went wrong. Please try again.");
+              setSubmitting(false);
+            }
           }}
           className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-bold text-white transition hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-50"
         >
           {submitting ? "处理中..." : "确认付款完成"}
         </button>
+
+        {errorMessage ? (
+          <div className="mt-3 rounded-xl border border-[#E8B4B4] bg-[#FFF5F5] px-4 py-3 text-sm text-[#9E3535]">
+            {errorMessage}
+          </div>
+        ) : null}
       </div>
 
       {receiptModalOpen ? (

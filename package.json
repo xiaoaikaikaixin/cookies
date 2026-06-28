@@ -6,6 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "db:generate-sql": "prisma migrate diff --from-empty --to-schema prisma/schema.prisma --script --output prisma/init.sql",
+    "db:push": "npm run db:generate-sql && node --env-file=.env --env-file=.env.local scripts/apply-sql-to-turso.mjs prisma/init.sql",
+    "db:seed": "node --env-file=.env --env-file=.env.local --import tsx prisma/seed.ts",
     "lint": "eslint",
     "postinstall": "prisma generate"
   },
@@ -13,6 +16,7 @@
     "@libsql/client": "^0.17.4",
     "@prisma/adapter-libsql": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "framer-motion": "^12.42.0",
     "lucide-react": "^1.18.0",
     "next": "16.2.9",
     "react": "19.2.4",
@@ -28,6 +32,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "prisma": "^7.8.0",
+    "sharp": "^0.35.2",
     "tailwindcss": "^4",
     "tsx": "^4.22.4",
     "typescript": "^5"

@@ -6,7 +6,13 @@ import { Menu, Phone, Search, ShoppingCart, Truck, X } from "lucide-react";
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
 import { useState } from "react";
 import { useCart } from "@/lib/cart-context";
-import CartDrawer from "./cart-drawer";
+import dynamic from 'next/dynamic';
+
+// Dynamically import CartDrawer to fix module resolution and ensure client-side only rendering
+const CartDrawer = dynamic(() => import('./cart-drawer'), {
+  ssr: false,
+  loading: () => null,
+});
 import logoImage from "../../../data/Logo1.png";
 
 const navLinks = [
@@ -14,7 +20,7 @@ const navLinks = [
   { href: "/products", label: "所有年饼" },
   { href: "/products?category=gift-box", label: "礼盒系列" },
   { href: "/products?category=premium", label: "新品推荐" },
-  { href: "/#about", label: "关于我们" },
+  { href: "/about", label: "关于我们" },
 ];
 
 export default function Header() {
@@ -26,13 +32,16 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-50">
         {/* Top announcement bar */}
-        <div className="bg-[#F7E6C9] text-[13px] text-[#7B4509]">
+        <div className="bg-[#F7E6C9] text-[16px] text-[#7B4509]">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2">
             <div className="flex items-center gap-2">
-              <Truck size={14} />
+              <Truck size={18} />
               <span>满$100免运费（新加坡）</span>
             </div>
             <div className="hidden items-center gap-5 md:flex">
+              <Link href="/admin/orders" className="text-sm font-semibold text-[#7B4509] hover:text-[#C0823A]">
+                Admin
+              </Link>
               <span className="flex items-center gap-2">
                 <Phone size={14} />
                 065 - 86538893
@@ -44,7 +53,7 @@ export default function Header() {
                 <FaInstagram className="text-[14px]" />
               </a>
               <a
-                href="https://wa.me/60123456789"
+                href="https://wa.me/6586538893"
                 aria-label="WhatsApp"
                 className="text-sm font-semibold hover:text-[#5C3008]"
               >
@@ -77,7 +86,7 @@ export default function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`relative py-2 text-[15px] font-semibold transition-colors ${
+                  className={`relative py-2 text-[26px] font-semibold transition-colors ${
                     link.href === "/"
                       ? "text-[#C0823A]"
                       : "text-[#7B4509] hover:text-[#C0823A]"
@@ -93,13 +102,13 @@ export default function Header() {
 
             {/* Right: search + cart */}
             <div className="flex items-center gap-2 md:gap-3">
-              <button
-                type="button"
-                className="hidden rounded-full p-2 text-[#7B4509] transition hover:bg-[#F7EFE5] md:inline-flex"
-                aria-label="Search"
+              <Link
+                href="/order-tracking"
+                className="hidden items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-[#7B4509] transition hover:bg-[#F7EFE5] md:inline-flex"
               >
-                <Search size={20} />
-              </button>
+                <Search size={18} />
+                订单查询
+              </Link>
               <button
                 onClick={() => setCartOpen(true)}
                 className="inline-flex items-center gap-2 rounded-xl bg-[#C0823A] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#9E5F2A]"

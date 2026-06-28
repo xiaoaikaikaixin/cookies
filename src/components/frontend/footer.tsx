@@ -49,7 +49,7 @@ export default function Footer() {
               { href: "/", label: "首页" },
               { href: "/products", label: "所有年饼" },
               { href: "/products?category=gift-box", label: "礼盒系列" },
-              { href: "/cart", label: "购物车" },
+              { href: "/about", label: "关于我们" },
             ].map((link) => (
               <Link
                 key={link.href}
@@ -86,7 +86,7 @@ export default function Footer() {
               <a href="https://instagram.com" aria-label="Instagram" className="rounded-full border border-[#E8D5B8] p-2 transition hover:border-[#C0823A] hover:text-[#C0823A]">
                 <FaInstagram className="text-[15px]" />
               </a>
-              <a href="https://wa.me/60123456789" className="rounded-full border border-[#E8D5B8] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] transition hover:border-[#C0823A] hover:text-[#C0823A]">
+              <a href="https://wa.me/6586538893" className="rounded-full border border-[#E8D5B8] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] transition hover:border-[#C0823A] hover:text-[#C0823A]">
                 WA
               </a>
             </div>

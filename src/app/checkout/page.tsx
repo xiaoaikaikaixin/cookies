@@ -61,38 +61,36 @@ export default function CheckoutPage() {
     setSubmitting(true);
 
     try {
-      const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          notes: [
-            `Address: ${form.address}`,
-            `Delivery Date: ${form.deliveryDate}`,
-            form.notes.trim(),
-          ]
-            .filter(Boolean)
-            .join("\n\n"),
-          items: items.map((i) => ({ productId: i.id, quantity: i.quantity, price: i.price })),
-          totalAmount: totalPrice,
-        }),
-      });
+      // 不创建订单，只是保存表单数据到 sessionStorage 并跳转到付款页面
+      // 生成一个临时的订单ID（用时间戳）
+      const tempOrderId = Date.now();
+      // 保存订单数据到 sessionStorage，包括产品的完整信息
+      const orderData = {
+        ...form,
+        notes: [
+          `Address: ${form.address}`,
+          `Delivery Date: ${form.deliveryDate}`,
+          form.notes.trim(),
+        ]
+          .filter(Boolean)
+          .join("\n\n"),
+        items: items.map((i) => ({
+          productId: i.id,
+          quantity: i.quantity,
+          price: i.price,
+          product: {
+            id: i.id,
+            name: i.name,
+            nameCn: i.nameCn,
+            slug: i.name,
+            image: i.image,
+          },
+        })),
+        totalAmount: totalPrice,
+      };
+      window.sessionStorage.setItem(`pending-order-${tempOrderId}`, JSON.stringify(orderData));
 
-      if (!res.ok) throw new Error("Order failed");
-
-      const data = await res.json();
-      toast.success("Order placed successfully!");
-
-      if (form.paymentMethod === "whatsapp") {
-        clearCart();
-        window.sessionStorage.removeItem(CHECKOUT_FORM_STORAGE_KEY);
-      }
-
-      router.push(
-        form.paymentMethod === "paynow"
-          ? `/order-payment/${data.orderId}`
-          : `/order-confirmation/${data.orderId}`
-      );
+      router.push(`/order-payment/${tempOrderId}`);
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
@@ -206,7 +204,7 @@ export default function CheckoutPage() {
                 disabled={submitting}
                 className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {submitting ? "Placing Order..." : `Place Order - $${totalPrice.toFixed(2)}`}
+                {submitting ? "Processing..." : `Check Out - $${totalPrice.toFixed(2)}`}
               </button>
             </div>
           </div>

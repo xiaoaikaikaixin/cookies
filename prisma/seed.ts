@@ -1,19 +1,33 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaLibSql } from "@prisma/adapter-libsql";
 
-const adapter = new PrismaLibSql({ url: "file:./dev.db" });
+const databaseUrl =
+  process.env.TURSO_DATABASE_URL ||
+  process.env.DATABASE_URL ||
+  "file:./dev.db";
+const authToken = process.env.TURSO_AUTH_TOKEN;
+const adapter = new PrismaLibSql({
+  url: databaseUrl,
+  authToken,
+});
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // Categories
-  const traditional = await prisma.category.create({
-    data: { name: "传统饼干 Traditional", slug: "traditional" },
+  const traditional = await prisma.category.upsert({
+    where: { slug: "traditional" },
+    update: { name: "传统饼干 Traditional" },
+    create: { name: "传统饼干 Traditional", slug: "traditional" },
   });
-  const premium = await prisma.category.create({
-    data: { name: "精品饼干 Premium", slug: "premium" },
+  const premium = await prisma.category.upsert({
+    where: { slug: "premium" },
+    update: { name: "精品饼干 Premium" },
+    create: { name: "精品饼干 Premium", slug: "premium" },
   });
-  const giftBox = await prisma.category.create({
-    data: { name: "礼盒套装 Gift Box", slug: "gift-box" },
+  const giftBox = await prisma.category.upsert({
+    where: { slug: "gift-box" },
+    update: { name: "礼盒套装 Gift Box" },
+    create: { name: "礼盒套装 Gift Box", slug: "gift-box" },
   });
 
   const products = [
@@ -41,8 +55,20 @@ async function main() {
   ];
 
   for (const p of products) {
-    await prisma.product.create({
-      data: {
+    await prisma.product.upsert({
+      where: { slug: p.slug },
+      update: {
+        name: p.name,
+        nameCn: p.nameCn,
+        description: p.desc,
+        price: p.price,
+        unit: p.unit,
+        categoryId: p.catId,
+        isFeatured: p.featured,
+        isActive: true,
+        image: p.image,
+      },
+      create: {
         name: p.name,
         nameCn: p.nameCn,
         slug: p.slug,
@@ -51,6 +77,7 @@ async function main() {
         unit: p.unit,
         categoryId: p.catId,
         isFeatured: p.featured,
+        isActive: true,
         image: p.image,
       },
     });
