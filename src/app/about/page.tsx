@@ -35,60 +35,67 @@ export default function AboutPage() {
   return (
     <main className="overflow-hidden">
       {/* ================================================================
-          SECTION 1 — HERO  (y: 120–390, ~19%)
-          Two columns. Left = text. Right = large image in warm card.
-          Background: cream gradient with ambient glows.
+          SECTION 1 — HERO  
+          Two columns. Left = text. Right = full image with gradient mask.
+          Background: warm cream with ambient lighting.
+          Height: ~520px desktop, responsive mobile.
           ================================================================ */}
-      <section className="relative overflow-hidden bg-[linear-gradient(180deg,#F8F0E3_0%,#F4E8D8_40%,#F8F4EF_100%)]">
-        <div className="pointer-events-none absolute -left-24 -top-24 h-[450px] w-[450px] rounded-full bg-[#E8C580]/12 blur-[120px]" aria-hidden="true" />
-        <div className="pointer-events-none absolute right-0 top-32 h-[350px] w-[350px] rounded-full bg-[#D4A54A]/8 blur-[100px]" aria-hidden="true" />
+      <section className="relative overflow-hidden bg-[#F8F4EF] min-h-[520px]">
+        {/* Ambient lighting effects */}
+        <div className="pointer-events-none absolute -left-32 -top-20 h-[500px] w-[500px] rounded-full bg-[#E8C580]/10 blur-[140px]" aria-hidden="true" />
+        <div className="pointer-events-none absolute right-0 top-20 h-[400px] w-[400px] rounded-full bg-[#D4A54A]/6 blur-[120px]" aria-hidden="true" />
 
-        <div className="relative mx-auto max-w-7xl px-6">
-          <div className="grid lg:grid-cols-[1fr_1.15fr] lg:min-h-[560px]">
-            {/* LEFT — text */}
-            <div className="flex flex-col justify-center py-14 md:py-20 lg:py-24">
+        <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="grid lg:grid-cols-[0.4fr_0.6fr] min-h-[520px] items-center">
+            {/* LEFT — text (40%) */}
+            <div className="flex flex-col justify-center py-12 md:py-16 lg:py-0">
               <FadeUp>
-                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#C0823A]">Our Story</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.32em] text-[#C0823A] mb-2">OUR STORY</p>
               </FadeUp>
-              <FadeUp delay={0.1}>
-                <h1 className="mt-5 max-w-[420px] font-[family-name:var(--font-serif)] text-4xl font-bold leading-[1.12] text-[#5C3008] md:text-5xl lg:text-[3.4rem]">
-                  Crafted with Love,<br />Shared with Joy
+              <FadeUp delay={0.08}>
+                <h1 className="font-[family-name:var(--font-serif)] text-4xl md:text-5xl lg:text-[3.2rem] font-bold leading-[1.15] text-[#5C3008] mb-6">
+                  Crafted with Love,<br />
+                  Shared with Joy
                 </h1>
               </FadeUp>
-              <FadeUp delay={0.15}>
-                <p className="mt-6 max-w-[440px] text-[15px] leading-[1.75] text-[#7A6047] md:text-base">
-                  At Lisa Handmade Cookie, we believe the best memories are made around good food
-                  and meaningful moments. What started as a passion for baking for family has grown
-                  into a brand dedicated to creating handcrafted festive treats.
-                </p>
-                <p className="mt-4 max-w-[440px] text-[15px] leading-[1.75] text-[#7A6047] md:text-base">
-                  Every cookie is made in small batches, using selected ingredients and traditional
-                  recipes — ensuring every bite delivers warmth, freshness, and happiness.
-                </p>
+              <FadeUp delay={0.14}>
+                <div className="space-y-4 max-w-[420px]">
+                  <p className="text-[15px] md:text-base leading-relaxed text-[#7A6047]">
+                    At Lisa Handmade Cookie, we believe the best memories are created around good food and meaningful moments.
+                  </p>
+                  <p className="text-[15px] md:text-base leading-relaxed text-[#7A6047]">
+                    What started as a passion for baking for family and friends has grown into a brand dedicated to creating handcrafted cookies and festive treats that bring people together.
+                  </p>
+                  <p className="text-[15px] md:text-base leading-relaxed text-[#7A6047]">
+                    Every cookie is carefully made in small batches, using selected ingredients and traditional recipes, ensuring every bite delivers warmth, freshness, and happiness.
+                  </p>
+                </div>
               </FadeUp>
               <FadeUp delay={0.2}>
-                <p className="mt-5 font-[family-name:var(--font-serif)] text-lg italic text-[#C0823A]">
-                  For us, baking is more than a business — it is a way of sharing love.
+                <p className="mt-6 font-[family-name:var(--font-serif)] text-lg md:text-xl italic text-[#C0823A]">
+                  For us, baking is more than a business — <br className="hidden md:inline" />it is a way of sharing love.
                 </p>
               </FadeUp>
-              <FadeUp delay={0.25}>
-                <Link href="/products" className="mt-8 inline-flex min-h-[48px] items-center rounded-xl bg-[#C0823A] px-7 py-3.5 text-sm font-semibold text-white shadow-md transition duration-300 hover:bg-[#9E5F2A] hover:shadow-lg hover:-translate-y-0.5">
+              <FadeUp delay={0.26}>
+                <Link href="/products" className="mt-8 inline-flex items-center justify-center rounded-full bg-[#C0823A] px-8 py-4 text-sm font-bold text-white transition-all duration-300 hover:bg-[#9E5F2A] hover:shadow-xl hover:-translate-y-0.5">
                   Shop Collection
                 </Link>
               </FadeUp>
             </div>
 
-            {/* RIGHT — large lifestyle image */}
+            {/* RIGHT — image (60%) */}
             <ZoomIn delay={0.1}>
-              <div className="relative flex items-center py-6 lg:py-8">
-                <div className="absolute -inset-2 rounded-[2.25rem] border border-[#EBDCC8]/40 bg-gradient-to-br from-[#FDF9F2]/30 to-transparent" aria-hidden="true" />
-                <div className="relative w-full overflow-hidden rounded-[2rem] border border-[#EADBC8] bg-[#F8EFE2] shadow-[0_24px_56px_rgba(124,84,43,0.10)]">
-                  <img src="/7.png" alt="Lisa Handmade Cookie — artisan bakery with cookie jar, gift box, and warm sunlight"
-                    className="h-auto w-full object-cover"
-                    sizes="(min-width: 1024px) 50vw, 100vw" />
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#F8EFE2]/50 via-transparent to-transparent" />
-                  <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#F4E8D8]/90 to-transparent lg:w-16" />
+              <div className="relative -mx-6 lg:mx-0 lg:-mr-8 h-[400px] md:h-[480px] lg:h-[520px]">
+                {/* Main image */}
+                <div className="absolute inset-0">
+                  <img src="/7.png" 
+                    alt="Lisa Handmade Cookie — artisan bakery with cookie jar, gift box, and warm sunlight"
+                    className="h-full w-full object-cover object-right" />
                 </div>
+                {/* Gradient mask to blend image with background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#F8F4EF] via-[#F8F4EF]/60 to-transparent" />
+                {/* Soft vignette */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#F8F4EF]/30 via-transparent to-transparent" />
               </div>
             </ZoomIn>
           </div>
