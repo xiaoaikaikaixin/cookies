@@ -4,7 +4,7 @@ import ProductCard from "@/components/frontend/product-card";
 export const dynamic = 'force-dynamic';
 
 export default async function ProductsPage() {
-  let products = [];
+  let products: any[] = [];
   try {
     products = await prisma.product.findMany({
       where: { isActive: true },

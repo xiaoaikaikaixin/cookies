@@ -63,7 +63,7 @@ const reasons = [
 ];
 
 export default async function Home() {
-  let featured = [];
+  let featured: any[] = [];
   try {
     featured = await prisma.product.findMany({
       where: { isFeatured: true, isActive: true },

@@ -11,8 +11,8 @@ export const dynamic = 'force-dynamic';
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  let product = null;
-  let relatedProducts = [];
+  let product: any = null;
+  let relatedProducts: any[] = [];
   
   try {
     product = await prisma.product.findUnique({
